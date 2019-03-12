@@ -1,26 +1,35 @@
 package com.boomaa.jpoker.init;
 
 public class Card {
-	private final String suit;
-	private final String rank;
-	private final int value;
+	private static String SUIT;
+	private static String RANK;
+	private static int VALUE;
+	private static boolean PAIRED;
 	
 	public Card(String rank, String suit, int value) {
-		this.suit = suit;
-		this.rank = rank;
-		this.value = value;
+		SUIT = suit;
+		RANK = rank;
+		VALUE = value;
 	}
 
 	public String getSuit() {
-		return suit;
+		return SUIT;
 	}
 
 	public String getRank() {
-		return rank;
+		return RANK;
 	}
 
 	public int getValue() {
-		return value;
+		return VALUE;
+	}
+	
+	public void setPaired(boolean state) {
+		PAIRED = state;
+	}
+	
+	public boolean isPaired() {
+		return PAIRED;
 	}
 	
 }
