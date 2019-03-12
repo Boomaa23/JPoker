@@ -1,5 +1,6 @@
 package com.boomaa.jpoker.util;
 
+import com.boomaa.jpoker.init.Card;
 import com.boomaa.jpoker.init.Flop;
 import com.boomaa.jpoker.init.Player;
 
@@ -64,11 +65,11 @@ public class GameLogic {
 	}
 	
 	private static boolean pair(Player p) {
-		
+		return findPairs(p, 1);
 	}
 
 	private static boolean twoPair(Player p) {
-		
+		return findPairs(p, 2);
 	}
 	
 	private static boolean threeOfAKind(Player p) {
@@ -99,5 +100,22 @@ public class GameLogic {
 		
 	}
 	
-	
+	private static boolean findPairs(Player p, int reqPairs) {
+		int foundPairs = 0;
+		Card[] cards = new Card[p.getCards().length + F.getFlop().length];
+		for(int i = 0;i < cards.length;i++) {
+			if(i < p.getCards().length) {
+				cards[i] = p.getCards()[i];
+			} else if(i < F.getFlop().length) {
+				cards[i] = F.getFlop()[i];
+			}
+			
+			for(int j = i + 1;j < cards.length;j++) {
+				if(cards[i].equals(cards[j])) {
+					foundPairs++;
+				}
+			}
+		}
+		return foundPairs == reqPairs;
+	}
 }
