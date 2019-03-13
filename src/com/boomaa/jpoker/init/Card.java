@@ -1,6 +1,6 @@
 package com.boomaa.jpoker.init;
 
-public class Card {
+public class Card implements Comparable<Card> {
 	private static String SUIT;
 	private static String RANK;
 	private static int VALUE;
@@ -30,6 +30,11 @@ public class Card {
 	
 	public boolean isPaired() {
 		return PAIRED;
+	}
+
+	@Override
+	public int compareTo(Card c) {
+		return super.compareTo(c);
 	}
 	
 }

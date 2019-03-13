@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.boomaa.jpoker.init.Card;
 import com.boomaa.jpoker.init.Flop;
 import com.boomaa.jpoker.init.Player;
+import com.boomaa.jpoker.init.Pot;
 
 public class GameLogic {
 	private static Player[] PLAYER_LIST;
@@ -15,13 +16,13 @@ public class GameLogic {
 	private static int WINNING_METHOD = 0;
 	
 	//TODO change CURR_CARDS so that it is sorted by Arrays.sort whenever it is set
-	//TODO change pair finding and threeofakind methods to reflect ^^ ascending order sorting
+	//TODO change pair finding methods to reflect ^^ ascending order sorting
 	public static Player determineWinner(Player[] playerList, Flop f) {
 		PLAYER_LIST = playerList;
 		F = f;
 		
-		for(Player p : PLAYER_LIST) {
-			CURR_PLAYER = p;
+		for(int i = 0;i < PLAYER_LIST.length;i++) {
+			CURR_PLAYER = PLAYER_LIST[i];
 			setCurrentCards();
 			boolean[] winMethod = new boolean[10];
 				winMethod[0] = highCard();
@@ -34,19 +35,20 @@ public class GameLogic {
 				winMethod[7] = fourOfAKind();
 				winMethod[8] = straightFlush();
 				winMethod[9] = royalFlush();
-			p.setWinCat(winMethod);
+			CURR_PLAYER.setWinCat(winMethod);
 			
-			for(int i = p.getWinCat().length;i >= 0;i--) {
-				if(p.getWinCat()[i]) {
-					if(i > WINNING_METHOD) {
-						WINNING_METHOD = i;
-						CURR_WINNER = p;
-					} else if(i == WINNING_METHOD) {
-						
+			for(int j = CURR_PLAYER.getWinCat().length;j >= 0;j--) {
+				if(CURR_PLAYER.getWinCat()[j]) {
+					if(j > WINNING_METHOD) {
+						WINNING_METHOD = j;
+						CURR_WINNER = CURR_PLAYER;
+					} else if(j == WINNING_METHOD) {
+						Pot.split(CURR_PLAYER);
 					}
 				}
 			}
 		}
+		Pot.win(CURR_WINNER);
 		return CURR_WINNER;
 	}
 	
@@ -74,18 +76,19 @@ public class GameLogic {
 	}
 	
 	private static boolean pair() {
-		return findDuplicates(1);
+		return findPairs(1);
 	}
 
 	private static boolean twoPair() {
-		return findDuplicates(2);
+		return findPairs(2);
 	}
 	
 	private static boolean threeOfAKind() {
 		for(int i = 0; i < CURR_CARDS.length;i++) {
 			for(int j = i + 1;j < CURR_CARDS.length;j++) {
 				for(int k = j + 1;k < CURR_CARDS.length;j++) {
-					if(CURR_CARDS[i].getRank().equals(CURR_CARDS[j].getRank()) && CURR_CARDS[j].getRank().equals(CURR_CARDS[k].getRank())) {
+					if(CURR_CARDS[i].getRank().equals(CURR_CARDS[j].getRank()) 
+							&& CURR_CARDS[j].getRank().equals(CURR_CARDS[k].getRank())) {
 						return true;
 					}
 				}
@@ -109,15 +112,36 @@ public class GameLogic {
 	}
 	
 	private static boolean flush() {
-		
+		Card[] orderedCards = CURR_CARDS;
+		Arrays.sort
+		for(int i = 0;i < orderedCards.length - 4;i++) {
+			if(orderedCards[i].getSuit() == orderedCards) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private static boolean fullHouse() {
-		
+		return (threeOfAKind() && findPairs(1));
 	}
 	
 	private static boolean fourOfAKind() {
-		
+		for(int i = 0; i < CURR_CARDS.length;i++) {
+			for(int j = i + 1;j < CURR_CARDS.length;j++) {
+				for(int k = j + 1;k < CURR_CARDS.length;j++) {
+					for(int l = k + 1;l < CURR_CARDS.length;l++) {
+						if(CURR_CARDS[i].getRank().equals(CURR_CARDS[j].getRank()) 
+								&& CURR_CARDS[j].getRank().equals(CURR_CARDS[k].getRank()) 
+								&& CURR_CARDS[k].equals(CURR_CARDS[l])) {
+							return true;
+						}
+					}
+					
+				}
+			}
+		}
+		return false;
 	}
 	
 	private static boolean straightFlush() {
@@ -128,7 +152,7 @@ public class GameLogic {
 		
 	}
 	
-	private static boolean findDuplicates(int reqAmt) {
+	private static boolean findPairs(int reqAmt) {
 		int foundPairs = 0;
 		for(int i = 0; i < CURR_CARDS.length;i++) {
 			for(int j = i + 1;j < CURR_CARDS.length;j++) {
